@@ -166,6 +166,10 @@ int conn_find_existing(struct sockaddr_in target, proto_t proto) {
 
     pthread_t curr_thread = pthread_self();
     for (int i = 0; i < MAX_CONNS; i++) {
+        if (proto == DPDK && conns[i].proto == DPDK && conns[i].parent_thread == curr_thread) {
+            rv = i;
+            break;
+        }
         if (conns[i].sock == -1)
             continue;
         if (proto == UDP && conns[i].parent_thread == curr_thread) {

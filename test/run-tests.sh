@@ -2,6 +2,7 @@
 
 COL_RED='\033[0;32m'
 COL_GRN='\e[0;31m'
+COL_YLW='\e[0;33m'
 COL_DEF='\e[m'
 
 rm -rf *.gcda *.gcov log_tests.txt gcov/ ../src/*.gcda ../src/gcov/
@@ -19,8 +20,12 @@ fi
 for test in "${TESTS[@]}"; do
     echo -n "TEST $test: "
     echo -e "\n\nTEST $test:\n" >> log_tests.txt
-    if bash -c ./$test >> log_tests.txt 2>&1; then
+    bash -c ./$test >> log_tests.txt 2>&1
+    rc=$?
+    if [ $rc -eq 0 ]; then
         echo -e "${COL_RED}SUCCESS${COL_DEF}"
+    elif [ $rc -eq 77 ]; then
+        echo -e "${COL_YLW}SKIPPED${COL_DEF} (non-root or missing USE_DPDK)"
     else
         echo -e "${COL_GRN}ERROR${COL_DEF}"
     fi
